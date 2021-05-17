@@ -98,7 +98,7 @@ function war() {
     return
   }
   if (gameBoard.field1[0].value === gameBoard.field2[0].value) {
-    // alert('War!');
+    alert('War!');
     for (i = 0; i < 2; i++) {
       gameBoard.field1[i + 1] = gameBoard.players[0].playerCards[0]
       gameBoard.field2[i + 1] = gameBoard.players[1].playerCards[0]
