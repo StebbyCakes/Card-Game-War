@@ -51,7 +51,6 @@ class Board {
     d.shuffleDeck();
     this.players[0].playerCards = d.cards.slice(0, 26);
     this.players[1].playerCards = d.cards.slice(26, 52);
-
   }
 }
 let gameBoard = new Board();
@@ -59,208 +58,117 @@ gameBoard.start('Player1', 'Player2');
 game();
 
 function game() {
-  while (gameBoard.players[0].playerCards.length > 1 && gameBoard.players[1].playerCards.length > 1 && counter < 1000) { // had these && as || before
-    counter++
+  while (gameBoard.players[0].playerCards.length > 1 && gameBoard.players[1].playerCards.length > 1) {
+     // had these && as || before
     war();
   }
   console.log(gameBoard.players);
-  if (gameBoard.players[0].playerCards.length < 0) {
+    // in case game ends suddenly
+  if (gameBoard.players[0].playerCards.length <= 0) {
+    for (i = 0; i < gameBoard.field2.length; i++) {
+      gameBoard.players[1].playerCards.push(gameBoard.field2[i])
+
+    }for (i = 0; i < gameBoard.field1.length; i++) {
+      gameBoard.players[1].playerCards.push(gameBoard.field1[i])
+
+    }
     alert('Player 2 Won!!!!');
+    console.log("Player 2 wins")
   }
-  if (gameBoard.players[1].playerCards.length < 0) {
+  if (gameBoard.players[1].playerCards.length <= 0) {
+    for (i = 0; i < gameBoard.field2.length; i++) {
+      gameBoard.players[0].playerCards.push(gameBoard.field2[i])
+// if card is undefined continue
+    }for (i = 0; i < gameBoard.field1.length; i++) {
+      gameBoard.players[0].playerCards.push(gameBoard.field1[i])
+    }
     alert('Player 1 Won!!!!');
+    console.log("Player 1 wins")
   }
 }
 
 function war() {
+  // this assigns the first card on field for each player & removes from players hands
   gameBoard.field1[0] = gameBoard.players[0].playerCards[0]
   gameBoard.field2[0] = gameBoard.players[1].playerCards[0]
   gameBoard.players[0].playerCards.shift()
   gameBoard.players[1].playerCards.shift()
+  // check in case players dont have cards to play
   if (gameBoard.players[0].playerCards.length < 1) {
     alert('Player 2 Won!!!!');
   }
   if (gameBoard.players[1].playerCards.length < 1) {
     alert('Player 1 Won!!!!');
   }
+  // check for = value on the card on the field
   var checkCard = true;
-  while (checkCard){
+  // if cards are === then adds 2 more cards to fields
+  while (checkCard) {
     if (gameBoard.field1[0].value === gameBoard.field2[0].value) {
-    alert('War!');
-    checkCard = true;
-    if (gameBoard.players[0].playerCards.length < 1) {
-      for (i = 0; i < gameBoard.field2.length; i++){
-      gameBoard.players[1].playerCards.push(gameBoard.field2[i])
-      gameBoard.players[1].playerCards.push(gameBoard.field1[i])
+      alert('War!');
+      checkCard = true;
+      // checks if player1 has less than one card(or no cards) && pushes cards from fields to players2
+      if (gameBoard.players[0].playerCards.length < 1) {
+        for (i = 0; i < gameBoard.field2.length; i++) {
+          gameBoard.players[1].playerCards.push(gameBoard.field2[i])
+
+        }
+        for (i = 0; i < gameBoard.field1.length; i++) {
+          gameBoard.players[1].playerCards.push(gameBoard.field1[i])
+        }
+        // clearing the fields for noDupe
+        gameBoard.field1=[]
+        gameBoard.field2=[]
+        break;
+      }
+      // checks if player2 has less than one card(or no cards) && pushes cards from fields to players1
+      if (gameBoard.players[1].playerCards.length < 1) {
+        for (i = 0; i < gameBoard.field2.length; i++) {
+          gameBoard.players[0].playerCards.push(gameBoard.field2[i])
+        }
+        for (i = 0; i < gameBoard.field1.length; i++) {
+          gameBoard.players[0].playerCards.push(gameBoard.field1[i])
+        }
+        gameBoard.field1=[]
+        gameBoard.field2=[]
+        // break in place so if cards are undefined, get out of while loop before bugs galore(pushing more undefined cards into player fields)
+        break;
+      }
+      // adds 2 cards to each players field and removes cards from player hands
+      for (i = 0; i < 2; i++) {
+        gameBoard.field1.push(gameBoard.players[0].playerCards[0]);
+        gameBoard.field2.push(gameBoard.players[1].playerCards[0]);
+        gameBoard.players[0].playerCards.shift()
+        gameBoard.players[1].playerCards.shift()
+      }
+      // in case card values are not the same exit while loop
+    } else {
+      checkCard = false;
     }
-      alert('Player 2 Won!!!!');
-      break;
-    }
-    if (gameBoard.players[1].playerCards.length < 1) {
-      for (i = 0; i < gameBoard.field1.length; i++){
+  }
+  // ends game once players have less than 1 card
+  if (gameBoard.field1.length < 1 || gameBoard.field2.length < 1){
+return;
+}
+// check is player has bigger value card than other & pushes field cards into hands
+  if (gameBoard.field1[gameBoard.field1.length - 1].value > gameBoard.field2[gameBoard.field2.length - 1].value) {
+    for (i = 0; i < gameBoard.field1.length; i++) {
       gameBoard.players[0].playerCards.push(gameBoard.field2[i])
       gameBoard.players[0].playerCards.push(gameBoard.field1[i])
     }
-      alert('Player 1 Won!!!!');
-      break;
-    }
-    for (i = 0; i < 2; i++) {
-      gameBoard.field1[i + 1] = gameBoard.players[0].playerCards[0]
-      gameBoard.field2[i + 1] = gameBoard.players[1].playerCards[0]
-      gameBoard.players[0].playerCards.shift()
-      gameBoard.players[1].playerCards.shift()
-    }
-  } else {
-    checkCard = false;
-  }
-}
-  if (gameBoard.field1[gameBoard.field1.length-1].value > gameBoard.field2[gameBoard.field2.length-1].value) {
-    for (i = 0; i < gameBoard.field1.length; i++){
-    gameBoard.players[0].playerCards.push(gameBoard.field2[i])
-    gameBoard.players[0].playerCards.push(gameBoard.field1[i])
-  }
     gameBoard.field1 = []
     gameBoard.field2 = []
     return
   }
-  if (gameBoard.field1[gameBoard.field1.length-1].value < gameBoard.field2[gameBoard.field2.length-1].value) {
+  // check is player has bigger value card than other & pushes field cards into hands
+  if (gameBoard.field1[gameBoard.field1.length - 1].value < gameBoard.field2[gameBoard.field2.length - 1].value) {
     for (i = 0; i < gameBoard.field2.length; i++) {
-    gameBoard.players[1].playerCards.push(gameBoard.field2[0])
-    gameBoard.players[1].playerCards.push(gameBoard.field1[0])
-  }
+      gameBoard.players[1].playerCards.push(gameBoard.field2[0])
+      gameBoard.players[1].playerCards.push(gameBoard.field1[0])
+    }
     gameBoard.field1 = []
     gameBoard.field2 = []
     return
   }
 
 }
-
-
-// Teacher Solution
-
-// (function(){
-//   'use strict';
-// const Card = function({
-//   value,
-//   suit
-// } = {}) {
-//   this.value = value;
-//   this.suit = suit;
-// }
-// Card.prototype.print = function() {
-//   const suits = [
-//     'spades',
-//     'diamonds',
-//     'clubs',
-//     'hearts'
-//   ];
-//   const values = [
-//     null,
-//     null,
-//     "2",
-//     "3",
-//     "4",
-//     "5",
-//     "6",
-//     "7",
-//     "8",
-//     "9",
-//     "10",
-//     "J",
-//     "Q",
-//     "K",
-//     "A",
-//   ]
-//
-//   return `${values[this.value]} of ${suits[this.suits][0].toUpperCase()}${suits[this.suit].slice(1)}}`;
-// }
-// const Deck = function() {
-//   this.cards = [];
-//   this.suits = ['Clubs', 'Hearts', 'Spades', 'Diamonds'];
-//   for (let i = 0; i < 4; i++) { // this is the suit and there are 4
-//     for (let j = 2; j <= 14; j++) { // this is setting the first card with value of 2 with all 4 suits and ending with Ace having a value of 14
-//       this.cards.push(new Card({
-//         suit: i,
-//         value: j
-//       }))
-//     }
-//   }
-// }
-// const Player = function({name} = {}) {
-//   this.name = name;
-//   this.hand = [];
-//   this.cardCount = 0;
-//   this.draw = null;
-//
-// }
-//
-// const Game = function() {
-//   const player1 = prompt(`Enter player one's name`);
-//   const player2 = prompt(`Enter player two's name`);
-//
-//   this.player1 = new Player({
-//     name: player1
-//   }); // this could be written in shorthand if the key is the same as the value
-//   this.player2 = new Player({
-//     name: player2
-//   }); // this could be written in shorthand if the key is the same as the value
-//   this.deck = new Deck
-//   this.pot = [];
-// }
-//
-// Game.prototype.shuffle = function(deck) {
-//   let i = deck.length, j, temp;
-//   while (i--) { // i is 52 because it is set to deck.length so i-- goes down from 52 to 0 which would be the whole deck
-//     j = Math.floor(Math.random() * (i + 1));
-//     temp = deck[i];
-//     deck[i] = deck[j];
-//     deck[j] = temp;
-//   }
-// }
-//
-// Game.prototype.deal = function() {
-//   this.shuffle(this.deck.cards);
-//   this.player1.hand = this.deck.cards.filter(function(item, index) {
-//     return !(index % 2); // this gives the remainder of the number and if it doesnt have one so its 0 this function will return it to true
-//   });
-//   this.player2.hand = this.deck.cards.filter(function(item, index) {
-//     return index % 2;
-//   });
-//
-//   this.player1.cardCount = this.player1.hand.length;
-//   this.player2.cardCount = this.player2.hand.length;
-// }
-//
-// Game.prototype.draw = function(){
-//   const player1Card = this.player1.hand.shift();
-//   const player2Card = this.player2.hand.shift();
-//
-//   this.player1.cardCount -= 1;
-//   this.player2.cardCount -= 1;
-//
-//   if(!this.player1.cardCount) {
-//     this.shuffle(this.player1.hand);
-//   }
-//   if(!this.player2.cardCount) {
-//     this.shuffle(this.player2.hand);
-//   }
-//   this.player1.draw = player1Card;
-//   this.player2.draw = player2Card;
-//
-//   this.pot = [player1Card, player2Card, ...this.pot];
-//   console.log(`${this.player1.name} draws a ${player1Card.print()}.`)
-//   console.log(`${this.player2.name} draws a ${player1Card.print()}.`)
-// }
-//
-// Game.prototype.play = function() {
-//   this.shuffle(this.deck.cards);
-//   this.deal();
-//   console.log(`Let's play WAR!`);
-//   console.log(`\n`);
-//   game.draw();
-// }
-//
-//
-// const game = new Game();
-// game.play();
-// })();
